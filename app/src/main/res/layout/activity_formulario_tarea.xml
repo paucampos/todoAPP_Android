@@ -10,7 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/light_background"
+        android:background="@color/background"
         android:orientation="vertical"
         android:padding="20dp">
 
@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Nueva tarea"
-            android:textColor="@color/text_dark"
+            android:textColor="@color/text_primary"
             android:textSize="26sp"
             android:textStyle="bold" />
 
@@ -56,9 +56,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:backgroundTint="@color/primary_blue"
+            android:backgroundTint="@color/secondary"
             android:text="Guardar tarea"
-            android:textColor="@color/white" />
+            android:textColor="@color/background" />
 
         <Button
             android:id="@+id/btnCancelar"

@@ -4,7 +4,8 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,8 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private Button btnNuevaTarea;
-    private TextView tvSinTareas;
+    private ImageButton btnNuevaTarea;
+    private LinearLayout contenedorSinTareas;
     private RecyclerView rvTareas;
 
     private TareaRepository repository;
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         btnNuevaTarea = findViewById(R.id.btnNuevaTarea);
-        tvSinTareas = findViewById(R.id.tvSinTareas);
+        contenedorSinTareas = findViewById(R.id.contenedorSinTareas);
         rvTareas = findViewById(R.id.rvTareas);
 
         repository = new TareaRepository(this);
@@ -82,10 +83,10 @@ public class MainActivity extends AppCompatActivity {
         adapter.actualizarLista(tareas);
 
         if (tareas.isEmpty()) {
-            tvSinTareas.setVisibility(View.VISIBLE);
+            contenedorSinTareas.setVisibility(View.VISIBLE);
             rvTareas.setVisibility(View.GONE);
         } else {
-            tvSinTareas.setVisibility(View.GONE);
+            contenedorSinTareas.setVisibility(View.GONE);
             rvTareas.setVisibility(View.VISIBLE);
         }
     }
