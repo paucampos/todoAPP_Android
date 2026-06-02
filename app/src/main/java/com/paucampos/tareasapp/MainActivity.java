@@ -1,21 +1,14 @@
 package com.paucampos.tareasapp;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,14 +17,10 @@ import com.paucampos.tareasapp.database.TareaRepository;
 import com.paucampos.tareasapp.model.Tarea;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private EditText etTitulo;
-    private EditText etDescripcion;
-    private EditText etFecha;
-    private Button btnGuardar;
+    private Button btnNuevaTarea;
     private TextView tvSinTareas;
     private RecyclerView rvTareas;
 
@@ -44,24 +33,24 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        inicializarVistas();
-        configurarRecyclerView();
+        btnNuevaTarea = findViewById(R.id.btnNuevaTarea);
+        tvSinTareas = findViewById(R.id.tvSinTareas);
+        rvTareas = findViewById(R.id.rvTareas);
 
         repository = new TareaRepository(this);
 
-        cargarTareas();
-        etFecha.setOnClickListener(v -> mostrarDatePicker());
+        configurarRecyclerView();
 
-        btnGuardar.setOnClickListener(v -> guardarTarea());
+        btnNuevaTarea.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, FormularioTareaActivity.class);
+            startActivity(intent);
+        });
     }
 
-    private void inicializarVistas() {
-        etTitulo = findViewById(R.id.etTitulo);
-        etDescripcion = findViewById(R.id.etDescripcion);
-        etFecha = findViewById(R.id.etFecha);
-        btnGuardar = findViewById(R.id.btnGuardar);
-        tvSinTareas = findViewById(R.id.tvSinTareas);
-        rvTareas = findViewById(R.id.rvTareas);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cargarTareas();
     }
 
     private void configurarRecyclerView() {
@@ -88,35 +77,6 @@ public class MainActivity extends AppCompatActivity {
         rvTareas.setAdapter(adapter);
     }
 
-    private void guardarTarea() {
-        String titulo = etTitulo.getText().toString().trim();
-        String descripcion = etDescripcion.getText().toString().trim();
-        String fecha = etFecha.getText().toString().trim();
-        String estado = "Pendiente";
-
-        if (titulo.isEmpty()) {
-            etTitulo.setError("Ingresa un título");
-            return;
-        }
-
-        if (fecha.isEmpty()) {
-            etFecha.setError("Ingresa una fecha");
-            return;
-        }
-
-        Tarea tarea = new Tarea(titulo, descripcion, fecha, estado);
-
-        long resultado = repository.insertarTarea(tarea);
-
-        if (resultado > 0) {
-            Toast.makeText(this, "Tarea guardada", Toast.LENGTH_SHORT).show();
-            limpiarFormulario();
-            cargarTareas();
-        } else {
-            Toast.makeText(this, "Error al guardar la tarea", Toast.LENGTH_SHORT).show();
-        }
-    }
-
     private void cargarTareas() {
         List<Tarea> tareas = repository.obtenerTareas();
         adapter.actualizarLista(tareas);
@@ -130,32 +90,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void limpiarFormulario() {
-        etTitulo.setText("");
-        etDescripcion.setText("");
-        etFecha.setText("");
-    }
-
-    private void mostrarDatePicker() {
-        Calendar calendar = Calendar.getInstance();
-
-        DatePickerDialog dialog = new DatePickerDialog(
-                this,
-                (view, year, month, dayOfMonth) -> {
-                    String fecha = year + "-" +
-                            String.format("%02d", month + 1) + "-" +
-                            String.format("%02d", dayOfMonth);
-
-                    etFecha.setText(fecha);
-                },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-        );
-
-        dialog.show();
-    }
-
     private void mostrarConfirmacionEliminar(Tarea tarea) {
         new AlertDialog.Builder(this)
                 .setTitle("Eliminar tarea")
@@ -166,8 +100,6 @@ public class MainActivity extends AppCompatActivity {
                     if (filas > 0) {
                         Toast.makeText(this, "Tarea eliminada", Toast.LENGTH_SHORT).show();
                         cargarTareas();
-                    } else {
-                        Toast.makeText(this, "No se pudo eliminar", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("No", null)
